@@ -1,0 +1,513 @@
+<ion-header translucent="true" class="no-header-box">
+  <div class="header-container">
+    <div class="back-btn" (click)="goBack()">
+      <img src="assets/back.png" alt="Back" />
+    </div>
+    <h1 class="page-title">Report a Lost Item</h1>
+  </div>
+</ion-header>
+
+<ion-content class="add-missing-page">
+  <div class="form-container">
+
+    <!-- 🟦 Item Name -->
+    <ion-label class="field-label">Item Name</ion-label>
+    <ion-input class="input-item" [(ngModel)]="itemName" placeholder="Enter item name"></ion-input>
+
+    <!-- 🟦 Type Dropdown -->
+    <ion-label class="field-label">Type</ion-label>
+    <ion-select
+      class="input-item select-box"
+      [(ngModel)]="selectedType"
+      placeholder="Select Type"
+      (ionChange)="onTypeChange()"
+    >
+      <ion-select-option value="electronics">Electronics</ion-select-option>
+      <ion-select-option value="jewelry">Jewelry</ion-select-option>
+      <ion-select-option value="keys">Keys</ion-select-option>
+      <ion-select-option value="clothing">Clothing</ion-select-option>
+      <ion-select-option value="others">Others</ion-select-option>
+    </ion-select>
+
+    <!-- 🟢 Show only if “Others” is selected -->
+    <div *ngIf="selectedType === 'others'">
+      <ion-input
+        class="input-item"
+        [(ngModel)]="otherType"
+        placeholder="Enter item type"
+      ></ion-input>
+    </div>
+
+    <!-- 🟦 Location Dropdown -->
+    <ion-label class="field-label">Location</ion-label>
+    <ion-select
+      class="input-item select-box"
+      [(ngModel)]="selectedLocation"
+      placeholder="Select Location"
+      (ionChange)="onLocationChange()"
+    >
+      <ion-select-option value="CICT Building">CICT Building</ion-select-option>
+      <ion-select-option value="CMBT Building">CMBT Building</ion-select-option>
+      <ion-select-option value="RET Building">RET Building</ion-select-option>
+      <ion-select-option value="Student Center">Student Center</ion-select-option>
+      <ion-select-option value="Gym">Gym</ion-select-option>
+      <ion-select-option value="Library">Library</ion-select-option>
+      <ion-select-option value="Parking Lot">Parking Lot</ion-select-option>
+      <ion-select-option value="others">Others</ion-select-option>
+    </ion-select>
+
+    <!-- 🟢 Show textfield if “Others” selected -->
+    <div *ngIf="selectedLocation === 'others'">
+      <ion-input
+        class="input-item"
+        [(ngModel)]="otherLocation"
+        placeholder="Enter location"
+      ></ion-input>
+    </div>
+
+    
+
+    <!-- 🕒 Time Picker -->
+    <ion-label class="field-label">Time</ion-label>
+    <div class="time-box" (click)="togglePicker()">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <span>{{ formattedDate }} {{ formattedTime }}</span>
+    </div>
+
+    <div *ngIf="showPicker" class="inline-picker">
+      <ion-datetime
+        presentation="date-time"
+        [(ngModel)]="selectedDateTime"
+        (ionChange)="updateDateTime()">
+      </ion-datetime>
+      <ion-button expand="block" class="done-btn" (click)="closePicker()">Done</ion-button>
+    </div>
+
+    <!-- 🟦 Description -->
+<ion-label class="field-label">Description</ion-label>
+<ion-textarea
+  class="input-item description-box"
+  [(ngModel)]="description"
+  placeholder="Enter a brief description of the item"
+  autoGrow="true">
+</ion-textarea>
+
+
+<!-- 📸 Photo Upload -->
+<ion-label class="field-label">Photo</ion-label>
+<div class="photo-box" (click)="triggerFileInput()">
+  <img [src]="photo || 'assets/sample-item.png'" />
+</div>
+
+<input type="file" accept="image/*" #fileInput (change)="onFileSelected($event)" hidden />
+<ion-button fill="clear" class="change-photo" (click)="triggerFileInput()">Change Photo</ion-button>
+
+
+    <!-- 🔘 Buttons -->
+    <div class="button-row">
+      <ion-button expand="block" class="cancel-btn" color="light" (click)="cancel()">Clear</ion-button>
+      <ion-button expand="block" class="submit-btn" (click)="submit()">Submit</ion-button>
+    </div>
+
+  </div>
+</ion-content>
+
+
+
+
+<style>
+/* ===== HEADER (same neumorphic background) ===== */
+.no-header-box {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 10px;
+  background: #edf4ff; /* match the same bluish background */
+}
+
+.page-title {
+  display: inline-block;
+  padding: 8px 10px;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #00bfff;
+  letter-spacing: 0.5px;
+  background: #eef2f6;
+  border-radius: 12px;
+  box-shadow:
+    inset 2px 2px 5px rgba(170, 180, 190, 0.5),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+  text-shadow:
+    2px 2px 4px rgba(163, 177, 198, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  margin: 15px 0 10px 15px;
+}
+
+/* 🟦 Neumorphic Back Button */
+.back-btn {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: #eef2f6;
+  box-shadow:
+    4px 4px 8px rgba(170, 180, 190, 0.5),
+    -4px -4px 8px rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    2px 2px 6px rgba(163, 177, 198, 0.5),
+    -2px -2px 6px rgba(255, 255, 255, 0.9);
+}
+
+.back-btn:active {
+  transform: scale(0.95);
+  box-shadow:
+    inset 3px 3px 6px rgba(163, 177, 198, 0.6),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+}
+
+/* 🖼 Back icon itself */
+.back-btn img {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 0 3px #00bfff);
+}
+
+
+
+  
+ .add-missing-page {
+
+  --background: #eef2f6 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .form-container {
+    max-width: 400px;
+    width: 90%;
+    margin: 40px auto;
+    background: #eef2f6;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow:
+      8px 8px 16px rgba(163, 177, 198, 0.6),
+      -8px -8px 16px rgba(255, 255, 255, 0.9);
+  }
+
+  
+ 
+  .field-label {
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    color: #444;
+  }
+
+  .input-item {
+    background: #eef2f6 !important;
+    border-radius: 14px;
+    margin-bottom: 15px;
+    box-shadow:
+      inset 5px 5px 10px rgba(163,177,198,0.7),
+      inset -5px -5px 10px rgba(255,255,255,0.95);
+      /* 🟢 Add comfortable padding inside the field */
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+
+  font-size: 15px;
+  color: #222;
+  }
+
+  /* 🟦 Make placeholder text slightly lighter and spaced */
+.input-item::part(native) {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
+.input-item::placeholder {
+  color: #888 !important;
+  opacity: 0.8;
+}
+
+ion-input {
+  --highlight-color-focused: #00bfff; /* neon blue underline focus */
+  --placeholder-color: #888;
+  --color: #111;
+}
+
+.input-select {
+  --background: #eef2f6 !important;
+  border-radius: 14px;
+  box-shadow:
+    inset 5px 5px 10px rgba(163,177,198,0.7),
+    inset -5px -5px 10px rgba(255,255,255,0.95);
+  color: #333;
+  font-weight: 500;
+  padding-left: 10px;
+}
+
+
+/* 🟦 Neumorphic Select Dropdown */
+.select-box {
+  background: #eef2f6 !important;
+  border-radius: 14px;
+  box-shadow:
+    inset 5px 5px 10px rgba(163,177,198,0.7),
+    inset -5px -5px 10px rgba(255,255,255,0.95);
+  margin-bottom: 15px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  color: #222;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* 🟢 Placeholder style */
+.select-box::part(placeholder) {
+  color: #888 !important;
+  opacity: 0.8;
+}
+
+/* 🩵 Dropdown menu popup style */
+ion-select::part(placeholder) {
+  color: #666 !important;
+}
+
+ion-select::part(icon) {
+  color: #00bfff;
+  opacity: 0.9;
+}
+
+ion-select-popover::part(content) {
+  border-radius: 12px !important;
+  background: #f9fbff !important;
+  box-shadow:
+    4px 4px 10px rgba(163,177,198,0.4),
+    -4px -4px 10px rgba(255,255,255,0.9);
+  overflow: hidden;
+}
+
+ion-select-popover ion-item {
+  font-weight: 500;
+  color: #222;
+  --background: transparent;
+}
+
+ion-select-popover ion-item:hover {
+  background: rgba(0,191,255,0.1);
+}
+
+ion-select-popover ion-item:focus {
+  background: rgba(0,191,255,0.15);
+}
+
+/* 🟦 Description textarea — neumorphic style same as inputs */
+.description-box {
+  background: #eef2f6 !important;
+  border-radius: 14px;
+  margin-bottom: 15px;
+  box-shadow:
+    inset 5px 5px 10px rgba(163,177,198,0.7),
+    inset -5px -5px 10px rgba(255,255,255,0.95);
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  color: #222;
+  font-size: 15px;
+  font-weight: 400;
+  min-height: 100px; /* comfortable height */
+  line-height: 1.4;
+}
+
+.description-box::part(placeholder) {
+  color: #888 !important;
+  opacity: 0.8;
+}
+
+
+
+  .time-box {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    background: #eef2f6;
+    border-radius: 14px;
+    padding: 10px 12px;
+    cursor: pointer;
+    box-shadow:
+      inset 5px 5px 10px rgba(163,177,198,0.7),
+      inset -5px -5px 10px rgba(255,255,255,0.95);
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 10px;
+
+    ion-icon {
+      color: #666;
+      font-size: 18px;
+    }
+
+    &:active {
+      filter: brightness(0.96);
+    }
+  }
+
+  .inline-picker {
+    margin-top: 8px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    background: #eef2f6;
+    box-shadow:
+      inset 5px 5px 10px rgba(163,177,198,0.7),
+      inset -5px -5px 10px rgba(255,255,255,0.95);
+    padding: 8px 10px;
+
+    ion-datetime {
+      border-radius: 12px;
+      background: transparent;
+    }
+
+    .done-btn {
+      margin-top: 8px;
+      border-radius: 9999px;
+      font-weight: 600;
+      height: 40px;
+      background: linear-gradient(145deg, #d8dde3, #f1f3f6);
+      box-shadow:
+        4px 4px 8px rgba(163,177,198,0.6),
+        -4px -4px 8px rgba(255,255,255,0.9);
+      color: #000 !important;
+    }
+  }
+
+  .photo-box {
+    width: 100%;
+    height: 150px;
+    border-radius: 16px;
+    background: #eef2f6;
+    box-shadow:
+      inset 5px 5px 10px rgba(163,177,198,0.7),
+      inset -5px -5px 10px rgba(255,255,255,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 14px;
+      object-fit: contain;
+    }
+  }
+
+  .change-photo {
+    display: block;
+    color: #555;
+    font-weight: 500;
+    text-transform: none;
+    margin-bottom: 15px;
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+ .cancel-btn, .submit-btn {
+  width: 100%;
+  border-radius: 9999px !important; /* capsule shape */
+  font-weight: 600;
+  height: 48px;
+  border: none !important;
+  --border-radius: 9999px;
+  transition: all 0.25s ease-in-out;
+  transform: scale(1);
+}
+
+/* CANCEL BUTTON — smooth neumorphic press animation */
+.cancel-btn {
+  --background: none !important;
+  background: linear-gradient(145deg, #f1f3f6, #d8dde3) !important;
+  color: #333 !important;
+  box-shadow:
+    6px 6px 12px rgba(163,177,198,0.6),
+    -6px -6px 12px rgba(255,255,255,0.9);
+}
+
+.cancel-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  box-shadow:
+    4px 4px 8px rgba(163,177,198,0.6),
+    -4px -4px 8px rgba(255,255,255,0.95);
+}
+
+.cancel-btn:active {
+  transform: scale(0.96);
+  box-shadow:
+    inset 4px 4px 8px rgba(163,177,198,0.7),
+    inset -4px -4px 8px rgba(255,255,255,0.9),
+     0 0 8px rgba(0,191,255,0.5);
+  filter: brightness(0.95);
+}
+
+/* Submit Button — clean neon blue, no square overlay */
+.submit-btn {
+  --background: transparent !important; /* remove Ionic's default */
+  background: linear-gradient(145deg, #00e0ff, #0095ff) !important;
+  border: none !important;
+  box-shadow:
+    0 0 14px rgba(0, 191, 255, 0.9),
+    6px 6px 12px rgba(0, 143, 191, 0.4),
+    -6px -6px 12px rgba(255, 255, 255, 0.9);
+  color: #fff !important;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+  transition: all 0.25s ease-in-out;
+}
+
+.submit-btn:hover {
+  filter: brightness(1.18);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 18px rgb(0, 191, 255),
+    4px 4px 8px rgba(0, 143, 191, 0.4),
+    -4px -4px 8px rgba(255, 255, 255, 0.95);
+}
+
+.submit-btn:active {
+  box-shadow:
+    inset 3px 3px 6px rgba(0, 143, 191, 0.5),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+}
+
+
+</style>

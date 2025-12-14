@@ -1,0 +1,436 @@
+<ion-content
+  class="ion-padding signup-page"
+  [fullscreen]="true"
+  scroll-y="true"
+  force-overscroll="false"
+>
+
+<style>
+/* === NEUMORPHIC SIGNUP PAGE (White-Gray Theme) === */
+.signup-page {
+  --background: #ffffff !important;
+  background: #ffffff !important; /* clean white top */
+  position: relative;
+  min-height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  scroll-behavior: smooth;
+}
+
+
+.signup-container {
+  max-width: 380px;
+  margin: 0 auto;
+  min-height: 100vh; /* ✅ instead use this */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 30px 20px 50px 20px;
+  position: relative;
+  z-index: 1;
+   padding-bottom: 100px; /* para may buffer kung gusto mo mag scroll */
+}
+
+/* === Curved Background === */
+.curved-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 55%;
+  background: linear-gradient(180deg, #f1f3f6, #d8dde3);
+  border-top-left-radius: 80% 30%;
+  border-top-right-radius: 80% 30%;
+  box-shadow: 0 -8px 25px rgba(163,177,198,0.35);
+  border-top: 1px solid rgba(255,255,255,0.6);
+  z-index: 0;
+}
+/* === Container === */
+.signup-container {
+  max-width: 380px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 30px 20px 50px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* === Logo === */
+.logo {
+  width: 250px;
+  margin: 0 auto 10px auto;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.4));
+}
+
+/* === Header Text === */
+.header-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: #00ebff;
+  margin-bottom: 15px;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+}
+
+/* === Profile Photo === */
+.profile-photo-container {
+  position: relative;
+  display: inline-block;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 25px auto;
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #00e0ff;
+  box-shadow:
+    8px 8px 16px rgba(163,177,198,0.6),
+    -8px -8px 16px rgba(255,255,255,0.9);
+}
+
+/* Upload icon */
+.upload-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: linear-gradient(145deg, #f1f3f6, #d8dde3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  box-shadow:
+    4px 4px 8px rgba(163,177,198,0.5),
+    -4px -4px 8px rgba(255,255,255,0.9);
+  transition: all 0.3s ease;
+}
+
+.upload-icon:hover {
+  transform: scale(1.1);
+  box-shadow:
+    2px 2px 6px rgba(163,177,198,0.4),
+    -2px -2px 6px rgba(255,255,255,0.9);
+}
+
+.camera-icon {
+  width: 20px;
+  height: 20px;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.7));
+  opacity: 0.85;
+}
+
+/* === Label === */
+.field-label {
+  text-align: left;
+  margin: 0 0 5px 5px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* === Input Fields (True Inner Neumorphism) === */
+.input-item {
+  border-radius: 14px;
+  margin-bottom: 15px;
+  --background: transparent !important;
+  --border-color: transparent;
+  --inner-border-width: 0;
+  --highlight-height: 0;
+
+  background: #e6e9ef !important;
+  box-shadow:
+    inset 5px 5px 10px rgba(163,177,198,0.7),
+    inset -5px -5px 10px rgba(255,255,255,0.95);
+  border: none !important;
+  color: #333;
+  transition: all 0.3s ease-in-out;
+  padding: 4px;
+}
+
+.input-item.ion-focused {
+  box-shadow:
+    inset 3px 3px 6px rgba(163,177,198,0.6),
+    inset -3px -3px 6px rgba(255,255,255,1);
+  filter: brightness(1.03);
+}
+
+ion-input, ion-select {
+  color: #333;
+  --placeholder-color: #777;
+}
+
+/* === Select === */
+ion-select {
+  --background: transparent;
+  color: #333;
+  font-size: 14px;
+}
+
+ion-select::part(icon) {
+  color: #00bfff;
+}
+
+/* === Button (Capsule Floating Neumorphic) === */
+ion-button.signup-btn {
+  --background: none !important;
+  --background-activated: none !important;
+  --ion-color-base: transparent !important;
+  --ion-color-primary: transparent !important;
+
+  width: 100%;
+  height: 55px;
+  border-radius: 9999px !important; /* Fully pill-shaped */
+  overflow: hidden;
+  margin-top: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff !important; /* Neon blue text */
+  background: linear-gradient(145deg, #00e0ff, #0095ff); /* Neon blue gradient */
+  box-shadow:
+    6px 6px 16px rgba(0, 128, 255, 0.5), /* soft shadow */
+    -6px -6px 16px rgba(0, 255, 255, 0.8); /* highlight for neuomorphism */
+  transition: all 0.25s ease-in-out;
+  border: none;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.7); /* neon glow */
+}
+
+.signup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    4px 4px 12px rgba(0, 128, 255, 0.5),
+    -4px -4px 12px rgba(0, 255, 255, 0.85);
+  filter: brightness(1.08);
+}
+
+.signup-btn:active {
+  box-shadow:
+    inset 5px 5px 12px rgba(0, 128, 255, 0.5),
+    inset -5px -5px 12px rgba(0, 255, 255, 0.7);
+  transform: translateY(1px);
+  filter: brightness(0.96);
+}
+
+
+/* === Password Toggle === */
+.toggle-password {
+  cursor: pointer;
+  font-size: 18px;
+  color: #00bfff;
+}
+
+/* === Register Text === */
+.register-text {
+  font-size: 14px;
+  margin-top: 15px;
+  color: #333;
+}
+
+.register-link {
+  color: #00bfff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.register-link:hover {
+  color: #000;
+  text-shadow: 0 0 3px rgba(255,255,255,0.8);
+}
+
+/* === Ion Icons === */
+ion-icon {
+  color: #00bfff;
+}
+
+@media (max-width: 768px) {
+  .signup-page.keyboard-open {
+    overflow: hidden !important;
+  }
+}
+
+.signup-page {
+  overscroll-behavior: none;
+  scroll-behavior: auto !important;
+}
+
+
+</style>
+
+
+  <div class="curved-bg"></div>
+
+  <div class="signup-container">
+    <img src="assets/Applogo-home.png" alt="BalikSayoKampus Logo" class="logo" />
+    <h2 class="header-text">Create Account</h2>
+
+   <!-- PROFILE PHOTO -->
+<div class="profile-photo-container">
+  <img src="assets/default-avatar.png" alt="Profile Photo" class="profile-photo" id="profilePreview">
+  <div class="upload-icon" (click)="openFilePicker()">
+    <img src="assets/icon/camera.png" alt="Upload Icon" class="camera-icon" />
+  </div>
+  <input type="file" id="fileInput" hidden accept="image/*" (change)="onFileSelected($event)">
+</div>
+
+
+    <!-- FORM -->
+  <form (ngSubmit)="signUp()" #signupForm="ngForm">
+  <p class="field-label">First Name</p>
+  <ion-item class="input-item">
+    <ion-icon slot="start" name="person-outline"></ion-icon>
+    <ion-input
+      type="text"
+      placeholder="Enter First Name"
+      [(ngModel)]="firstName"
+      name="firstName"
+      required
+      pattern="^[A-Za-z ]+$">
+    </ion-input>
+  </ion-item>
+
+  <p class="field-label">Last Name</p>
+  <ion-item class="input-item">
+    <ion-icon slot="start" name="person-outline"></ion-icon>
+    <ion-input
+      type="text"
+      placeholder="Enter Last Name"
+      [(ngModel)]="lastName"
+      name="lastName"
+      required
+      pattern="^[A-Za-z ]+$">
+    </ion-input>
+  </ion-item>
+
+  <p class="field-label">Email</p>
+  <ion-item class="input-item">
+    <ion-icon slot="start" name="mail-outline"></ion-icon>
+    <ion-input
+      type="email"
+      placeholder="example@email.com"
+      [(ngModel)]="email"
+      name="email"
+      required
+      pattern="^[\\w._%+-]+@(gmail|yahoo)\\.com$">
+    </ion-input>
+  </ion-item>
+
+  <p class="field-label">Role</p>
+  <ion-item class="input-item">
+    <ion-icon slot="start" name="briefcase-outline"></ion-icon>
+    <ion-select [(ngModel)]="role" name="role" required interface="popover" placeholder="Select Role">
+      <ion-select-option value="teacher">Teacher</ion-select-option>
+      <ion-select-option value="student">Student</ion-select-option>
+      <ion-select-option value="guard">Guard</ion-select-option>
+      <ion-select-option value="janitor">Janitor</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <p class="field-label">Password</p>
+  <ion-item class="input-item">
+    <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+    <ion-input
+      [type]="passwordType1"
+      placeholder="Enter Password"
+      [(ngModel)]="password"
+      name="password"
+      required
+      minlength="6">
+    </ion-input>
+    <ion-icon
+      slot="end"
+      [name]="passwordType1 === 'password' ? 'eye-outline' : 'eye-off-outline'"
+      class="toggle-password"
+      (click)="togglePassword(1)">
+    </ion-icon>
+  </ion-item>
+
+  <p class="field-label">Confirm Password</p>
+  <ion-item class="input-item">
+    <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+    <ion-input
+      [type]="passwordType2"
+      placeholder="Re-enter Password"
+      [(ngModel)]="confirmPassword"
+      name="confirmPassword"
+      required>
+    </ion-input>
+    <ion-icon
+      slot="end"
+      [name]="passwordType2 === 'password' ? 'eye-outline' : 'eye-off-outline'"
+      class="toggle-password"
+      (click)="togglePassword(2)">
+    </ion-icon>
+  </ion-item>
+
+  <ion-button expand="block" class="signup-btn" (click)="signUp()">
+  SIGN UP
+</ion-button>
+
+
+  <p class="register-text">
+    Already have an account?
+    <a href="/login" class="register-link">Log in</a>
+  </p>
+</form>
+
+  </div>
+  <script>
+document.addEventListener('ionFocusin', (e) => {
+  const active = document.activeElement;
+  if (active && active.tagName === 'ION-INPUT') {
+    const ionContent = document.querySelector('ion-content');
+    if (ionContent) ionContent.scrollToTop(200); // smooth reposition
+  }
+});
+</script>
+
+<script>
+window.addEventListener('keyboardDidShow', () => {
+  document.querySelector('.signup-page')?.classList.add('keyboard-open');
+});
+window.addEventListener('keyboardDidHide', () => {
+  document.querySelector('.signup-page')?.classList.remove('keyboard-open');
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // ✅ Detect laptop/desktop (no touch keyboard)
+  const isDesktop = !('ontouchstart' in window);
+
+  if (isDesktop) {
+    const ionContent = document.querySelector('ion-content');
+    if (ionContent) {
+      // Prevent automatic scrolling when focusing inputs
+      ionContent.addEventListener('ionFocusin', (e) => {
+        e.preventDefault();
+        ionContent.scrollToTop(0);
+      });
+    }
+
+    // Disable all scroll jumps when focusing fields
+    const inputs = document.querySelectorAll('ion-input, input, textarea');
+    inputs.forEach((el) => {
+      el.addEventListener('focus', (e) => {
+        window.scrollTo(0, 0); // stay in place
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      });
+    });
+  }
+});
+</script>
+
+</ion-content>

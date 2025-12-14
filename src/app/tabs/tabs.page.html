@@ -1,0 +1,217 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom" class="glass-tab">
+    <div class="active-line" [ngStyle]="{'transform': getActiveLinePosition()}"></div>
+
+    <ion-tab-button
+      tab="home"
+      [class.active]="selectedTab === 'home'"
+      (click)="setSelectedTab('home')">
+      <div class="icon-wrap">
+        <ion-icon name="home-outline"></ion-icon>
+      </div>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="report"
+      [class.active]="selectedTab === 'report'"
+      (click)="setSelectedTab('report')">
+      <div class="icon-wrap">
+        <ion-icon name="document-text-outline"></ion-icon>
+      </div>
+      <ion-label>Report</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="chat"
+      [class.active]="selectedTab === 'chat'"
+      (click)="setSelectedTab('chat')">
+      <div class="icon-wrap">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+      </div>
+      <ion-label>Chat</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="profile"
+      [class.active]="selectedTab === 'profile'"
+      (click)="setSelectedTab('profile')">
+      <div class="icon-wrap">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </div>
+      <ion-label>Profile</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+
+<ion-tabs>
+  <ion-tab-bar slot="bottom" class="glass-tab">
+    <div class="active-line" [ngStyle]="{'transform': getActiveLinePosition()}"></div>
+
+    <ion-tab-button
+      tab="home"
+      [class.active]="selectedTab === 'home'"
+      (click)="setSelectedTab('home')">
+      <div class="icon-wrap">
+        <ion-icon name="home-outline"></ion-icon>
+      </div>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="report"
+      [class.active]="selectedTab === 'report'"
+      (click)="setSelectedTab('report')">
+      <div class="icon-wrap">
+        <ion-icon name="document-text-outline"></ion-icon>
+      </div>
+      <ion-label>Report</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="chat"
+      [class.active]="selectedTab === 'chat'"
+      (click)="setSelectedTab('chat')">
+      <div class="icon-wrap">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+      </div>
+      <ion-label>Chat</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="profile"
+      [class.active]="selectedTab === 'profile'"
+      (click)="setSelectedTab('profile')">
+      <div class="icon-wrap">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </div>
+      <ion-label>Profile</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+
+<style>
+/* === Floating Neumorphic Glass Tab Bar === */
+.glass-tab {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 72px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 35px;
+  background: rgba(208, 211, 207, 0.45);
+  backdrop-filter: blur(18px) brightness(1.05);
+  -webkit-backdrop-filter: blur(18px) brightness(1.05);
+  box-shadow: 6px 6px 12px #b0b3ae, -6px -6px 12px #eef1ed;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  z-index: 999;
+}
+
+/* === Highlight Shine === */
+.glass-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(200, 200, 200, 0.1));
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* === Active Line === */
+.active-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 25%;
+  background: linear-gradient(90deg, #b0b3ae, #d0d3cf);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 0 10px rgba(176, 179, 174, 0.6);
+  transition: transform 0.4s cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+/* === Tab Buttons === */
+ion-tab-button {
+  --ripple-color: transparent;
+  color: #5a5a5a;
+  transition: all 0.3s ease;
+  flex-direction: column;
+  gap: 6px;
+  background: transparent !important;
+}
+
+/* === Icon Container === */
+.icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffffff; /* Changed to white */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 4px 4px 8px #b0b3ae, -4px -4px 8px #eef1ed;
+  transition: all 0.25s ease;
+}
+
+/* === Icon Press Effect (Neumorphic Dip) === */
+ion-tab-button:active .icon-wrap {
+  box-shadow: inset 4px 4px 8px #b0b3ae, inset -4px -4px 8px #eef1ed;
+  transform: scale(0.96);
+}
+
+ion-tab-button.active .icon-wrap {
+  box-shadow: inset 3px 3px 6px #b0b3ae, inset -3px -3px 6px #eef1ed;
+}
+
+/* === Icon === */
+ion-icon {
+  font-size: 24px;
+  color: #00bfff; /* Neon blue color */
+  transition: all 0.25s ease;
+}
+
+ion-tab-button.active ion-icon {
+  color: #00ffff; /* Slightly brighter neon blue for active state */
+  transform: scale(1.05);
+}
+
+/* === Label === */
+ion-label {
+  font-size: 12px;
+  color: #6b6b6b;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+}
+
+ion-tab-button.active ion-label {
+  color: #7c7f7a;
+  font-weight: 600;
+}
+
+/* === Floating Shadow Under Bar === */
+.glass-tab::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 10%;
+  width: 80%;
+  height: 18px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.15), transparent 70%);
+  filter: blur(6px);
+  border-radius: 50%;
+  z-index: -2;
+}
+
+/* === Fallback (No blur support) === */
+@supports not ((backdrop-filter: blur(10px))) {
+  .glass-tab {
+    background: #d0d3cf;
+  }
+}
+</style>

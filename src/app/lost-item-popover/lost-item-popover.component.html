@@ -1,0 +1,115 @@
+<ion-content class="lost-item-popover">
+  <div class="popover-container">
+    <ion-card>
+      <img
+        [src]="item?.image ? item.image : 'assets/sample-item.png'"
+        alt="Lost Item"
+        onerror="this.onerror=null; this.src='assets/sample-item.png';"
+      />
+
+      <ion-card-content>
+        <h2>{{ item?.name || 'Unknown Lost Item' }}</h2>
+        <ion-chip color="medium">{{ item?.status || 'NOT YET CLAIMED' }}</ion-chip>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-icon name="calendar-outline"></ion-icon>
+              <p>
+                <b>Found on:</b><br>
+                {{ item?.dateFound || 'Unknown Date' }}<br>
+                {{ item?.timeFound || '' }}
+              </p>
+            </ion-col>
+
+            <ion-col>
+              <ion-icon name="location-outline"></ion-icon>
+              <p>
+                <b>Found at:</b><br>
+                {{ item?.location || 'Unknown Location' }}
+              </p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <p><b>Additional description:</b><br>{{ item?.description || 'None.' }}</p>
+
+        <ion-button expand="block" color="warning" class="claim-btn">
+          CLAIM ITEM
+        </ion-button>
+
+        <p class="note">
+          (Because the item has not been claimed yet, you will be directly connected to the finder.)
+        </p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <style>
+    /* Remove default popover white background */
+    ion-popover::part(content) {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    /* Center the popover on screen */
+    .popover-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .popover-container ion-card {
+      width: 85%;
+      max-width: 320px;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .popover-container ion-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: contain;
+      background: #f9f9f9;
+    }
+
+    .popover-container ion-card-content {
+      text-align: left;
+      padding: 16px;
+    }
+
+    .popover-container h2 {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: #222;
+    }
+
+    .popover-container ion-chip {
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .popover-container ion-grid p {
+      font-size: 13px;
+      color: #333;
+    }
+
+    .popover-container .claim-btn {
+      margin-top: 10px;
+      font-weight: 600;
+      --border-radius: 8px;
+    }
+
+    .popover-container .note {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+    }
+  </style>
+</ion-content>

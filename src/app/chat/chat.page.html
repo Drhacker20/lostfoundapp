@@ -1,0 +1,267 @@
+<ion-content class="glass-content">
+
+  <!-- ===== Header (Updated Clean Style) ===== -->
+  <div class="header-container">
+    <h1 class="page-title">Messages</h1>
+  </div>
+
+  <!-- ===== Search Bar ===== -->
+  <div class="searchbar-wrapper">
+    <ion-searchbar
+      placeholder="Search chats..."
+      [(ngModel)]="searchQuery"
+      (ionInput)="filterChats()">
+    </ion-searchbar>
+  </div>
+
+  <!-- ===== Chat List ===== -->
+  <div class="chat-list">
+   <ion-item
+  *ngFor="let chat of filteredItems"
+  button
+  detail="false"
+  class="chat-item"
+  (click)="openChat(chat)">
+
+      <div class="chat-avatar">
+        <img [src]="chat.avatar" />
+      </div>
+
+      <div class="chat-info">
+        <h3>{{ chat.name }}</h3>
+        <p>{{ chat.message }}</p>
+        <span class="time">{{ chat.time }}</span>
+      </div>
+    </ion-item>
+  </div>
+
+  <!-- 🕵️‍♀️ No Results -->
+  <div *ngIf="filteredItems.length === 0" class="no-results">
+    <ion-icon name="search-outline"></ion-icon>
+    <p>No conversations found.</p>
+  </div>
+
+</ion-content>
+
+<style>
+/* ===== 🌤️ NEUMORPHIC CONVERSATIONS PAGE ===== */
+/* ===== BACKGROUND ===== */
+ion-content.glass-content {
+  --background: #eef2f6;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Single-layer clean background */
+ion-content.glass-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #eef2f6;
+  z-index: -1;
+}
+
+/* ===== HEADER (neumorphic clean style) ===== */
+.no-header-box {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.header-container {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 20px 0 10px;
+  background: #eef2f6;
+}
+
+.page-title {
+  display: inline-block;
+  padding: 8px 10px;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #00bfff;
+  letter-spacing: 0.5px;
+  background: #eef2f6;
+  border-radius: 12px;
+  box-shadow:
+    inset 2px 2px 5px rgba(170, 180, 190, 0.5),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+  text-shadow:
+    2px 2px 4px rgba(163, 177, 198, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  margin: 15px 0 10px 15px;
+}
+
+/* ===== Search Bar ===== */
+.searchbar-wrapper {
+  background: #eef2f6;
+  border-radius: 999px;
+  box-shadow:
+    8px 8px 16px rgba(170, 180, 190, 0.5),
+    -8px -8px 16px rgba(255, 255, 255, 0.9);
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 47px;
+  flex: 1;
+  width: 430px;
+  margin: 0 auto;
+  transition: all 0.25s ease-in-out;
+}
+
+.searchbar-wrapper:has(ion-searchbar.searchbar-has-focus) {
+  box-shadow:
+    inset 5px 5px 10px rgba(170, 180, 190, 0.6),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.8);
+}
+
+/* ===== 🔍 INNER SEARCHBAR ===== */
+ion-searchbar {
+  --background: transparent !important;
+  --box-shadow: none;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px !important;
+  overflow: hidden;
+}
+
+ion-searchbar::part(container) {
+  border-radius: 999px !important;
+  background: #eef2f6 !important;
+  box-shadow:
+    inset 3px 3px 6px rgba(170, 180, 190, 0.4),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  overflow: hidden !important;
+  transition: all 0.25s ease-in-out;
+}
+
+ion-searchbar::part(input) {
+  border-radius: 999px !important;
+  font-size: 14px;
+  padding-left: 36px !important;
+  color: #2f2f2f;
+  background: transparent !important;
+  outline: none !important;
+}
+
+ion-searchbar.searchbar-has-focus::part(container),
+ion-searchbar.searchbar-has-focus::part(input) {
+  border-radius: 999px !important;
+  background: #eef2f6 !important;
+  box-shadow:
+    inset 4px 4px 8px rgba(170, 180, 190, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8) !important;
+}
+
+ion-searchbar::part(search-icon) {
+  color: #8c96a5 !important;
+  left: 12px;
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+ion-searchbar::part(input)::placeholder {
+  color: #8c96a5 !important;
+}
+
+/* ===== Chat List ===== */
+.chat-list {
+  margin-top: 15px;
+}
+
+.chat-item {
+  --background: #eef2f6;
+  margin: 10px;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow:
+    6px 6px 12px rgba(170, 180, 190, 0.5),
+    -6px -6px 12px rgba(255, 255, 255, 0.9);
+  transition: all 0.25s ease;
+}
+
+.chat-item:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    4px 4px 8px rgba(170, 180, 190, 0.5),
+    -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+/* ===== Avatar ===== */
+.chat-avatar {
+  margin-right: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-avatar img {
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  background: #eef2f6;
+  box-shadow:
+    inset 3px 3px 6px rgba(170, 180, 190, 0.5),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  object-fit: cover;
+}
+
+/* ===== Chat Info ===== */
+.chat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.chat-info h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2f2f2f;
+  margin: 0;
+}
+
+.chat-info p {
+  font-size: 13px;
+  color: #555;
+  margin: 2px 0 0 0;
+}
+
+.chat-info .time {
+  font-size: 11px;
+  color: #8c96a5;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/* ===== 🕵️‍♀️ NO RESULTS ===== */
+.no-results {
+  text-align: center;
+  color: #444;
+  margin: 40px 20px;
+  padding: 20px;
+  border-radius: 20px;
+  background: #eef2f6;
+  box-shadow:
+    inset 5px 5px 10px rgba(170, 180, 190, 0.5),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.8);
+}
+
+.no-results ion-icon {
+  font-size: 40px;
+  color: #8c96a5;
+  opacity: 0.9;
+}
+</style>

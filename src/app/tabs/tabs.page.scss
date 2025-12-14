@@ -1,0 +1,25 @@
+.custom-tab-bar {
+  --background: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
+ion-tab-button {
+  color: #a0a0a0;
+  --color-selected: #f9a825; /* orange highlight */
+  transition: all 0.3s ease;
+}
+
+ion-tab-button[aria-selected="true"] {
+  color: #f9a825;
+}
+
+ion-icon {
+  font-size: 22px;
+  margin-bottom: 3px;
+}
+
+ion-label {
+  font-size: 12px;
+  font-weight: 500;
+}

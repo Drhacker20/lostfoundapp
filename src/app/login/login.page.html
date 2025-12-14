@@ -1,0 +1,227 @@
+<ion-content class="ion-padding signup-page" [fullscreen]="true" scroll-y="false">
+
+
+  <style>
+/* === NEUMORPHIC LOGIN PAGE (White-Gray Theme) === */
+.login-page {
+  --background: #e6e9ef !important;
+  position: relative;
+  overflow: hidden;
+  background: #e6e9ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* === Curved Background === */
+.curved-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 55%;
+  background: linear-gradient(180deg, #f1f3f6, #d8dde3);
+  border-top-left-radius: 80% 30%;
+  border-top-right-radius: 80% 30%;
+  box-shadow: 0 -8px 25px rgba(163,177,198,0.35);
+  border-top: 1px solid rgba(255,255,255,0.6);
+  z-index: 0;
+}
+
+/* === Container === */
+.login-container {
+  max-width: 380px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* === Logo === */
+.logo {
+  width: 240px;
+  margin: 0 auto 25px auto;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.4));
+}
+
+/* === Label === */
+.field-label {
+  text-align: left;
+  margin: 0 0 5px 5px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* === Input Fields (True Inner Neumorphism) === */
+.input-item {
+  border-radius: 14px;
+  margin-bottom: 15px;
+  --background: transparent !important;
+  --border-color: transparent;
+  --inner-border-width: 0;
+  --highlight-height: 0;
+
+  background: #e6e9ef !important;
+  box-shadow:
+    inset 5px 5px 10px rgba(163,177,198,0.7),
+    inset -5px -5px 10px rgba(255,255,255,0.95);
+  border: none !important;
+  color: #333;
+  transition: all 0.3s ease-in-out;
+  padding: 4px;
+}
+
+.input-item.ion-focused {
+  box-shadow:
+    inset 3px 3px 6px rgba(163,177,198,0.6),
+    inset -3px -3px 6px rgba(255,255,255,1);
+  filter: brightness(1.03);
+}
+
+ion-input {
+  color: #333;
+  --placeholder-color: #777;
+}
+
+/* === Button (Capsule Floating Neumorphic) === */
+ion-button.login-btn {
+  --background: none !important;
+  --background-activated: none !important;
+  --ion-color-base: transparent !important;
+  --ion-color-primary: transparent !important;
+
+  width: 100%;
+  height: 55px;
+  border-radius: 9999px !important; /* Fully pill-shaped */
+  overflow: hidden;
+  margin-top: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff !important; /* Neon blue text */
+  background: linear-gradient(145deg, #00e0ff, #0095ff); /* Neon gradient */
+  box-shadow:
+    6px 6px 16px rgba(0, 128, 255, 0.5), /* soft shadow */
+    -6px -6px 16px rgba(0, 255, 255, 0.8); /* highlight for neuomorphism */
+  transition: all 0.25s ease-in-out;
+  border: none;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.7); /* neon glow */
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    4px 4px 12px rgba(0, 128, 255, 0.5),
+    -4px -4px 12px rgba(0, 255, 255, 0.85);
+  filter: brightness(1.08);
+}
+
+.login-btn:active {
+  box-shadow:
+    inset 5px 5px 12px rgba(0, 128, 255, 0.5),
+    inset -5px -5px 12px rgba(0, 255, 255, 0.7);
+  transform: translateY(1px);
+  filter: brightness(0.96);
+}
+
+
+/* === Password Toggle === */
+.toggle-password {
+  cursor: pointer;
+  font-size: 18px;
+  color: #00bfff;
+}
+
+/* === Register Text === */
+.register-text {
+  font-size: 14px;
+  margin-top: 15px;
+  color: #333;
+}
+
+.register-link {
+  color: #00bfff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.register-link:hover {
+  color: #000;
+  text-shadow: 0 0 3px rgba(255,255,255,0.8);
+}
+
+/* === Ion Icons === */
+ion-icon {
+  color: #00bfff;
+}
+
+.custom-toast {
+  font-weight: 600;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background: linear-gradient(145deg, #00e0ff, #0095ff);
+  color: white;
+  text-shadow: 0 0 6px rgba(255,255,255,0.6);
+}
+
+</style>
+
+
+ 
+  <div class="curved-bg"></div>
+
+  <div class="login-container">
+    <img src="assets/Applogo-home.png" alt="BalikSayoKampus Logo" class="logo" />
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <!-- EMAIL FIELD -->
+      <p class="field-label">Email</p>
+      <ion-item class="input-item">
+        <ion-icon slot="start" name="mail-outline"></ion-icon>
+        <ion-input
+          type="email"
+          formControlName="email"
+          placeholder="example@email.com"
+          required
+        ></ion-input>
+      </ion-item>
+      <p *ngIf="email.invalid && email.touched" style="color:red; font-size:13px;">Valid email required</p>
+
+      <!-- PASSWORD FIELD -->
+      <p class="field-label">Password</p>
+      <ion-item class="input-item">
+        <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+        <ion-input
+          [type]="passwordType"
+          formControlName="password"
+          placeholder="Password"
+          required
+        ></ion-input>
+        <ion-icon
+          slot="end"
+          [name]="passwordType === 'password' ? 'eye-outline' : 'eye-off-outline'"
+          class="toggle-password"
+          (click)="togglePassword()"
+        ></ion-icon>
+      </ion-item>
+      <p *ngIf="password.invalid && password.touched" style="color:red; font-size:13px;">Password is required (min 6 chars)</p>
+
+      <ion-button expand="block" class="login-btn" (click)="onLogin()">
+  LOG IN
+</ion-button>
+
+
+      <p class="register-text">
+        No Account Yet?
+        <a href="/signup" class="register-link">Create New</a>
+      </p>
+    </form>
+  </div>
+</ion-content>

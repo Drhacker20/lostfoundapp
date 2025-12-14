@@ -1,0 +1,18 @@
+ion-content {
+  --keyboard-offset: 0px !important;
+  overflow: hidden !important;
+}
+
+html, body, ion-app, ion-content {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+
+* {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+input, ion-input {
+  transform: translateZ(0);
+}

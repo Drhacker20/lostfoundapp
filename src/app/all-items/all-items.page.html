@@ -1,0 +1,300 @@
+<ion-header class="no-header-box">
+  <div class="header-container">
+    <button class="back-btn" (click)="goBack()">
+      <img src="assets/back.png" alt="Back" />
+    </button>
+    <h1 class="page-title">Lost Items</h1>
+  </div>
+
+  <!-- Custom Segment Tabs -->
+  <div class="custom-segment">
+    <button 
+      [class.active]="selectedSegment === 'today'" 
+      (click)="changeSegment('today')">Today</button>
+    <button 
+      [class.active]="selectedSegment === '7days'" 
+      (click)="changeSegment('7days')">7 Days</button>
+    <button 
+      [class.active]="selectedSegment === 'Claimed'" 
+      (click)="changeSegment('Claimed')">&gt;7 Days</button>
+
+    <div class="indicator"
+      [class.pos1]="selectedSegment === 'today'"
+      [class.pos2]="selectedSegment === '7days'"
+      [class.pos3]="selectedSegment === 'Claimed'"></div>
+  </div>
+</ion-header>
+
+<ion-content class="glass-content ion-padding">
+  <div class="card-grid">
+    <div *ngFor="let item of filteredItems" class="item-card" (click)="openItemDetails(item)">
+  <!-- Image -->
+  <img 
+    [src]="item?.photo || 'assets/sample-item.png'"
+    onerror="this.onerror=null; this.src='assets/sample-item.png';"
+    class="card-img"
+  />
+
+  <!-- Item Name -->
+  <h3>{{ item.itemName || 'Unknown Item' }}</h3>
+
+  <!-- Location -->
+  <p class="location">
+    <ion-icon name="location-outline"></ion-icon>
+    {{ item.location || 'Unknown Location' }}
+  </p>
+
+  <!-- Type with icon -->
+  <p class="type">
+    <ion-icon [name]="getTypeIcon(item.type)"></ion-icon>
+    {{ item.type || 'Unspecified Type' }}
+  </p>
+</div>
+
+
+    <div *ngIf="filteredItems.length === 0" class="no-results">
+      <ion-icon name="search-outline"></ion-icon>
+      <p>No lost items found.</p>
+    </div>
+  </div>
+</ion-content>
+
+<style>
+  /* ===== CONTENT BACKGROUND ===== */
+  ion-content.glass-content {
+    --background: #eef2f6;
+    position: relative;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+
+  ion-content.glass-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #eef2f6;
+    z-index: -1;
+  }
+
+  /* ===== HEADER ===== */
+  .no-header-box {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 0 10px;
+    background: #eef2f6;
+  }
+
+  ion-header {
+    --background: #eef2f6 !important;
+    background: #eef2f6 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* ===== BACK BUTTON ===== */
+  .back-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 16px;
+    background: #eef2f6;
+    box-shadow:
+      4px 4px 8px rgba(170, 180, 190, 0.5),
+      -4px -4px 8px rgba(255, 255, 255, 1);
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.25s ease;
+    margin-left: 15px;
+  }
+
+  .back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      2px 2px 6px rgba(170, 180, 190, 0.5),
+      -2px -2px 6px rgba(255, 255, 255, 1);
+  }
+
+  .back-btn:active {
+    box-shadow:
+      inset 4px 4px 8px rgba(163, 177, 198, 0.6),
+      inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+    transform: translateY(2px);
+  }
+
+  .back-btn img {
+    width: 20px;
+    height: 20px;
+    filter: drop-shadow(0 0 6px #00bfff);
+  }
+
+  /* ===== TITLE ===== */
+  .page-title {
+    display: inline-block;
+    padding: 8px 10px;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #00bfff;
+    letter-spacing: 0.5px;
+    background: #eef2f6;
+    border-radius: 12px;
+    box-shadow:
+      inset 2px 2px 5px rgba(170, 180, 190, 0.5),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+    text-shadow:
+      2px 2px 4px rgba(163, 177, 198, 0.6),
+      -2px -2px 4px rgba(255, 255, 255, 0.8);
+    margin: 15px 0 10px 15px;
+  }
+
+  /* ===== CUSTOM SEGMENT ===== */
+  .custom-segment {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 12px 10px;
+    padding: 8px;
+    border-radius: 30px;
+    background: rgba(238, 242, 246, 0.1);
+    box-shadow:
+      inset 2px 2px 4px rgba(170, 180, 190, 0.5),
+      inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .custom-segment button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    color: #666;
+    font-weight: 500;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .custom-segment button.active {
+    color: #00bfff;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(0, 191, 255, 0.4);
+  }
+
+  .custom-segment .indicator {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    width: 33.33%;
+    height: 4px;
+    background: #00bfff;
+    border-radius: 6px;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1;
+    box-shadow: 0 0 6px rgba(0, 191, 255, 0.6);
+  }
+
+  .indicator.pos1 { transform: translateX(0%); }
+  .indicator.pos2 { transform: translateX(100%); }
+  .indicator.pos3 { transform: translateX(200%); }
+
+  /* ===== CARD GRID ===== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+    padding: 0 14px 24px;
+  }
+
+  .item-card {
+    background: #eef2f6;
+    border-radius: 20px;
+    box-shadow:
+      6px 6px 12px rgba(170, 180, 190, 0.5),
+      -6px -6px 12px rgba(255, 255, 255, 0.9);
+    padding: 12px;
+    text-align: center;
+    transition: transform 0.25s ease-in-out;
+    color: #555;
+  }
+
+  .item-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .card-img {
+    width: 100%;
+    height: 120px;
+    border-radius: 18px;
+    object-fit: cover;
+    margin-bottom: 8px;
+    box-shadow:
+      inset 2px 2px 4px rgba(170, 180, 190, 0.5),
+      inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+  }
+
+  .item-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    margin: 5px 0 4px;
+  }
+
+  .item-card .location,
+  .item-card .type {
+    font-size: 12px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .item-card .type {
+    color: #6b6e73;
+    font-weight: 600;
+  }
+
+  .item-card ion-icon {
+    margin-right: 4px;
+    font-size: 14px;
+    color: #7a7a7a;
+  }
+
+  /* ===== NO RESULTS ===== */
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px;
+    border-radius: 20px;
+    background: rgba(245, 247, 250, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 5px 5px 10px rgba(170, 180, 190, 0.4),
+      inset -5px -5px 10px rgba(255, 255, 255, 0.8);
+    color: #555;
+    margin-top: 30px;
+  }
+
+  .no-results ion-icon {
+    font-size: 36px;
+    color: #7a7a7a;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+
+  .no-results p {
+    font-size: 14px;
+  }
+</style>

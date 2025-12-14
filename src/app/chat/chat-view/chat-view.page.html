@@ -1,0 +1,455 @@
+<!-- ===== HEADER ===== -->
+<ion-header class="no-header-box">
+  <div class="header-container">
+    <button class="back-btn" (click)="goBack()">
+      <img src="assets/back.png" alt="Back" />
+    </button>
+    <h1 class="page-title">{{ chatName }}</h1>
+  </div>
+</ion-header>
+
+<!-- ===== CONTENT ===== -->
+<ion-content class="glass-content chat-view">
+
+  <!-- ===== Confirm Banner Section ===== -->
+<div class="confirm-banner" *ngIf="!identityConfirmed">
+  <div class="banner-card pulse">
+    <img src="assets/verify-id.png" alt="Verify" class="banner-icon" />
+    <h3>Identity Verification Required</h3>
+    <p>Upload your name and photo so the finder can confirm your claim.</p>
+    <ion-button expand="block" class="confirm-btn" (click)="confirmIdentity()">
+      Confirm Identity
+    </ion-button>
+  </div>
+</div>
+
+<div class="confirm-banner" *ngIf="identityConfirmed && !claimerValidated">
+  <div class="banner-card pulse-green">
+    <img src="assets/approve.png" alt="Approve" class="banner-icon" />
+    <h3>Finder Approval Pending</h3>
+    <p>Finder must verify your identity before chat continues.</p>
+    <ion-button expand="block" color="success" class="confirm-btn" (click)="confirmClaimerIdentity()">
+      Approve Claimer Identity
+    </ion-button>
+  </div>
+</div>
+
+<div class="confirm-banner" *ngIf="claimerValidated && itemData?.status !== 'Claimed'">
+  <div class="banner-card pulse-yellow">
+    <img src="assets/handshake.png" alt="Handshake" class="banner-icon" />
+    <h3>Start Handover Validation</h3>
+    <p>Both parties must confirm 4-digit codes to finalize claim.</p>
+    <ion-button expand="block" color="tertiary" class="confirm-btn" (click)="startHandoverValidation()">
+      Start Handover
+    </ion-button>
+  </div>
+</div>
+
+
+  <!-- Chat Messages -->
+  <div class="messages">
+    <div *ngFor="let msg of messages" class="message" [ngClass]="msg.sender">
+      <div [innerHTML]="msg.text"></div>
+      <span class="time">{{ msg.time }}</span>
+    </div>
+  </div>
+</ion-content>
+
+<!-- ===== FOOTER ===== -->
+<ion-footer class="chat-footer">
+  <!-- Add image button -->
+  <ion-button fill="clear" class="add-btn" (click)="pickImage()">
+    <ion-icon name="add-outline"></ion-icon>
+  </ion-button>
+
+  <!-- Multiple image preview -->
+  <div class="image-preview-container" *ngIf="selectedImages.length > 0">
+    <div class="image-preview" *ngFor="let img of selectedImages; let i = index">
+      <img [src]="img" />
+      <ion-icon name="close-circle" class="remove-btn" (click)="removeImage(i)"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Text input -->
+  <ion-input placeholder="Type your message" [(ngModel)]="chatText"></ion-input>
+
+  <!-- Send button -->
+  <button fill="solid" class="send-btn" (click)="sendMessage()">
+    <ion-icon name="send"></ion-icon>
+  </button>
+</ion-footer>
+
+
+<style>
+/* ===== ⚪ NEUMORPHIC CHAT VIEW ===== */
+ion-content.glass-content {
+  --background: #eef2f6;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+ion-content.glass-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #eef2f6;
+  z-index: -1;
+}
+
+/* ===== HEADER ===== */
+.no-header-box {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  padding: 15px 0 5px;
+  background: #eef2f6;
+}
+
+/* 🟦 Back Button (neumorphic + neon blue) */
+.back-btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 16px;
+  background: #eef2f6;
+  box-shadow:
+    4px 4px 8px rgba(170, 180, 190, 0.5),
+    -4px -4px 8px rgba(255, 255, 255, 1);
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.25s ease;
+  margin-left: 15px;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    2px 2px 6px rgba(170, 180, 190, 0.5),
+    -2px -2px 6px rgba(255, 255, 255, 1);
+}
+
+ .back-btn:active {
+      box-shadow:
+        inset 4px 4px 8px rgba(163, 177, 198, 0.6),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+      transform: translateY(2px);
+    }
+.back-btn img {
+  width: 20px;
+  height: 20px;
+  filter: drop-shadow(0 0 6px #00bfff);
+}
+
+
+/* ===== PAGE TITLE ===== */
+.page-title {
+  display: inline-block;
+  padding: 8px 10px;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #00bfff;
+  letter-spacing: 0.5px;
+  background: #eef2f6;
+  border-radius: 12px;
+  box-shadow:
+    inset 2px 2px 5px rgba(170, 180, 190, 0.5),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+  text-shadow:
+    2px 2px 4px rgba(163, 177, 198, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  margin-left: 15px;
+}
+
+.image-preview-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 5px 0;
+  max-width: 70%;
+}
+
+.image-preview {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow:
+    4px 4px 8px rgba(170,180,190,0.5),
+    -4px -4px 8px rgba(255,255,255,0.9);
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-preview .remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: #020101;
+  font-size: 22px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.sent-image {
+  max-width: 200px;
+  border-radius: 14px;
+  margin-top: 6px;
+  box-shadow:
+    3px 3px 6px rgba(170,180,190,0.4),
+    -3px -3px 6px rgba(255,255,255,0.9);
+}
+
+
+/* ===== Confirm Banner ===== */
+
+/* ===== Animated Confirmation Banners ===== */
+.confirm-banner {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.banner-card {
+  background: #eef2f6;
+  border-radius: 22px;
+  padding: 20px;
+  width: 90%;
+  text-align: center;
+  box-shadow:
+    6px 6px 12px rgba(170,180,190,0.5),
+    -6px -6px 12px rgba(255,255,255,0.9);
+}
+
+.banner-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 6px #00bfff);
+}
+
+.banner-card h3 {
+  color: #00bfff;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.banner-card p {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* pulse animations for attention */
+.pulse {
+  animation: pulseBlue 2s infinite;
+}
+.pulse-green {
+  animation: pulseGreen 2s infinite;
+}
+.pulse-yellow {
+  animation: pulseYellow 2s infinite;
+}
+
+@keyframes pulseBlue {
+  0% { box-shadow: 0 0 0 0 rgba(0,191,255,0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(0,191,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,191,255,0); }
+}
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(0,255,136,0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(0,255,136,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
+}
+@keyframes pulseYellow {
+  0% { box-shadow: 0 0 0 0 rgba(255,210,0,0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(255,210,0,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,210,0,0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Confirm Identity Button (Neon Blue Gradient Style) ===== */
+.confirm-btn {
+  --background: transparent !important; /* remove Ionic's default background */
+  background: linear-gradient(145deg, #00e0ff, #0095ff) !important;
+  border: none !important;
+  border-radius: 50px !important;
+  height: 50px;
+  width: 90%;
+  margin: 10px auto 0;
+  display: block;
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+  transition: all 0.25s ease-in-out;
+  position: relative;
+  overflow: hidden;
+
+  /* initial neumorphic + neon glow */
+  box-shadow:
+    0 0 14px rgba(0, 191, 255, 0.9),
+    6px 6px 12px rgba(0, 143, 191, 0.4),
+    -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+.confirm-btn::part(native) {
+  background: transparent !important; /* remove Ionic’s inner layer */
+  box-shadow: none !important;
+}
+
+.confirm-btn:hover {
+  filter: brightness(1.18);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 18px rgb(0, 191, 255),
+    4px 4px 8px rgba(0, 143, 191, 0.4),
+    -4px -4px 8px rgba(255, 255, 255, 0.95);
+}
+
+.confirm-btn:active {
+  box-shadow:
+    inset 3px 3px 6px rgba(0, 143, 191, 0.5),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+
+
+/* ===== Messages ===== */
+.messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.message {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  word-wrap: break-word;
+  box-shadow:
+    6px 6px 12px rgba(170,180,190,0.5),
+    -6px -6px 12px rgba(255,255,255,0.9);
+}
+
+.message.user {
+  align-self: flex-end;
+  background: #00bfff;
+  border-top-right-radius: 5px;
+  color: #2f2f2f;
+}
+
+.message.other {
+  align-self: flex-start;
+  background: #eef2f6;
+  border-top-left-radius: 5px;
+  color: #2f2f2f;
+}
+
+/* ===== Footer ===== */
+.chat-footer {
+  background: #eef2f6;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 5px;
+  box-shadow:
+    inset 5px 5px 10px rgba(170,180,190,0.6),
+    inset -5px -5px 10px rgba(255,255,255,0.8);
+}
+
+/* ===== Input, Send, Add Buttons ===== */
+.add-btn  {
+  border-radius: 50%;
+  background: #eef2f6;
+  box-shadow:
+    6px 6px 12px rgba(170,180,190,0.5),
+    -6px -6px 12px rgba(255,255,255,0.9);
+  transition: all 0.25s ease;
+}
+
+/* ===== Send Button (Neon Blue + Neumorphic Style) ===== */
+.send-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #eef2f6;
+  box-shadow:
+    6px 6px 12px rgba(170, 180, 190, 0.5),
+    -6px -6px 12px rgba(255, 255, 255, 0.9);
+  transition: all 0.25s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.send-btn ion-icon {
+  font-size: 24px;
+  color: #00bfff; /* neon blue */
+  filter: drop-shadow(0 0 6px #00bfff);
+}
+
+.send-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    3px 3px 6px rgba(170, 180, 190, 0.5),
+    -3px -3px 6px rgba(255, 255, 255, 0.9);
+}
+
+.send-btn:active {
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.6),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+  transform: translateY(2px);
+}
+
+.add-btn ion-icon, .send-btn ion-icon {
+  font-size: 22px;
+  color: #555;
+}
+
+.chat-footer ion-input {
+  flex: 1;
+  border-radius: 25px;
+  background: #eef2f6;
+  box-shadow:
+    inset 3px 3px 6px rgba(170,180,190,0.5),
+    inset -3px -3px 6px rgba(255,255,255,0.8);
+  padding-left: 15px;
+  font-size: 14px;
+  --color: #2f2f2f;
+}
+
+/* ===== Scrollbar Hide ===== */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+</style>

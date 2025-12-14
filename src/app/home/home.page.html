@@ -1,0 +1,473 @@
+<!-- ✅ CLEAN HEADER LAYOUT (logo + profile icon on top, search bar below) -->
+<ion-header class="no-header-box">
+  <div class="header-container">
+    <!-- 🔹 Logo + Profile -->
+    <div class="top-row">
+      <img src="assets/Applogo-home.png" alt="App Logo" class="logo">
+
+      <!-- 🧍 Profile image button -->
+      <ion-button fill="clear" class="profile-btn" (click)="openProfile()">
+        <img [src]="profileImage" alt="Profile" class="profile-img" />
+
+      </ion-button>
+    </div>
+
+    <!-- 🔍 Neumorphic Search Bar -->
+    <div class="searchbar-wrapper">
+      <ion-searchbar [(ngModel)]="searchTerm" placeholder="Search lost items..."
+        (ionInput)="filterItems()" (ionFocus)="openFilters()">
+      </ion-searchbar>
+    </div>
+  </div>
+</ion-header>
+
+
+
+
+<ion-content (click)="handleOutsideClick($event)" class="glass-content">
+
+  <!-- 🔽 Filters -->
+  <div class="filter-container glass-card" *ngIf="showFilters" (click)="$event.stopPropagation()">
+    <ion-select placeholder="Filter by Type" [(ngModel)]="selectedType" (ionChange)="onTypeChange($event)">
+      <ion-select-option value="">All Types</ion-select-option>
+      <ion-select-option value="electronics">Electronics</ion-select-option>
+      <ion-select-option value="jewelry">Jewelry</ion-select-option>
+      <ion-select-option value="keys">Keys</ion-select-option>
+      <ion-select-option value="clothing">Clothing</ion-select-option>
+      <ion-select-option value="others">Others</ion-select-option>
+    </ion-select>
+
+    <ion-select placeholder="Filter by Location" [(ngModel)]="selectedLocation" (ionChange)="onLocationChange($event)">
+      <ion-select-option value="">All Locations</ion-select-option>
+      <ion-select-option value="CICT Building">CICT Building</ion-select-option>
+      <ion-select-option value="CMBT Building">CMBT Building</ion-select-option>
+      <ion-select-option value="RET Building">RET Building</ion-select-option>
+      <ion-select-option value="Student Center">Student Center</ion-select-option>
+      <ion-select-option value="Gym">Gym</ion-select-option>
+      <ion-select-option value="Library">Library</ion-select-option>
+      <ion-select-option value="Parking Lot">Parking Lot</ion-select-option>
+      <ion-select-option value="others">Others</ion-select-option>
+    </ion-select>
+
+    <div *ngIf="showOtherTypeInput" class="extra-input">
+      <ion-input [(ngModel)]="customType" (ionInput)="filterItems()" placeholder="Specify item type..."></ion-input>
+    </div>
+
+    <div *ngIf="showOtherLocationInput" class="extra-input">
+      <ion-input [(ngModel)]="customLocation" (ionInput)="filterItems()" placeholder="Specify location..."></ion-input>
+    </div>
+  </div>
+
+  <!-- 🔸 Section: Today -->
+  <div class="section-header">
+    <h2>Today</h2>
+    <a routerDirection="forward" routerLink="/all-items">SEE ALL</a>
+  </div>
+
+  <div class="card-row">
+    <div class="item-card glass-card" 
+     *ngFor="let item of filteredItems | slice:0:3"
+     (click)="openItemDetails(item)">
+
+  <img 
+    [src]="item?.photo ? item.photo : 'assets/sample-item.png'"
+    onerror="this.onerror=null; this.src='assets/sample-item.png';"
+    class="card-img"
+  />
+
+  <h3>{{ item.itemName || 'Unknown Item' }}</h3>
+
+  <p>
+    <ion-icon name="location-outline"></ion-icon>
+    {{ item.location || 'Unknown Location' }}
+  </p>
+
+  <p class="type">
+  <ion-icon [name]="getTypeIcon(item.type)"></ion-icon>
+  {{ item.type || 'Unspecified Type' }}
+</p>
+</div>
+
+
+  </div>
+
+  <div class="section-header">
+  <h2>Last 7 Days</h2>
+  <a routerDirection="forward" routerLink="/all-items">SEE ALL</a>
+</div>
+
+<div class="item-list">
+  <div class="list-card glass-card" *ngFor="let item of last7DaysItems"
+     (click)="openItemDetails(item)">
+
+  <img 
+    [src]="item?.photo || 'assets/sample-item.png'" 
+    onerror="this.onerror=null; this.src='assets/sample-item.png';"
+    class="list-img"
+  />
+
+  <div class="info">
+
+    <h4>{{ item.itemName }}</h4>
+
+    <p>
+      <ion-icon name="location-outline"></ion-icon>
+      {{ item.location }}
+    </p>
+
+   <p class="type">
+  <ion-icon [name]="getTypeIcon(item.type)"></ion-icon>
+  {{ item.type }}
+</p>
+
+
+    <span>{{ item.daysAgo }} days ago</span>
+  </div>
+</div>
+
+
+</div>
+
+
+ 
+
+
+
+  <!-- 🕵 No Results -->
+  <div *ngIf="filteredItems.length === 0" class="no-results glass-card">
+    <ion-icon name="search-outline"></ion-icon>
+    <p>No items found.</p>
+  </div>
+
+</ion-content>
+
+<style>
+  /* ===== 🌤️ GLOBAL CONTENT STYLE ===== */
+  ion-content.glass-content {
+    --background: #eef2f6;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ion-content.glass-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #eef2f6;
+    z-index: -1;
+  }
+
+  /* ===== 🧊 TOOLBAR ===== */
+  /* 🧭 Remove old header box */
+.no-header-box {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 🩵 Header container layout */
+.header-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 18px 10px;
+  background: #eef2f6;
+}
+
+/* 🧊 Top row: logo on left, profile on right */
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+/* Logo style */
+  .logo {
+    height: 70px;
+    border-radius: 12px;
+    box-shadow:
+      inset 2px 2px 5px rgba(170, 180, 190, 0.5),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+  }
+
+
+/* 👤 Profile button styling */
+.profile-btn {
+  --background: transparent;
+  --box-shadow: none;
+  --padding-start: 0;
+  --padding-end: 0;
+  margin: 0;
+}
+
+/* 🖼️ Profile image style */
+.profile-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    2px 2px 5px rgba(170, 180, 190, 0.5),
+    -2px -2px 5px rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover or tap effect */
+.profile-btn:hover .profile-img,
+.profile-btn:active .profile-img {
+  transform: scale(1.05);
+  box-shadow:
+    inset 2px 2px 5px rgba(170, 180, 190, 0.5),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+}
+
+
+
+/* 🔍 Neumorphic search bar below the logo */
+.searchbar-wrapper {
+  margin-top: 15px;
+  width: 100%;
+  background: #eef2f6;
+  border-radius: 999px;
+  box-shadow:
+    8px 8px 16px rgba(170, 180, 190, 0.5),
+    -8px -8px 16px rgba(255, 255, 255, 0.9);
+  padding: 3px;
+  transition: all 0.25s ease-in-out;
+}
+
+/* Focus (pressed) state */
+.searchbar-wrapper:has(ion-searchbar.searchbar-has-focus) {
+  box-shadow:
+    inset 5px 5px 10px rgba(170, 180, 190, 0.6),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Inner searchbar */
+ion-searchbar {
+  --background: #eef2f6 !important;
+  --box-shadow: none;
+  width: 100%;
+  height: 45px;
+  border-radius: 999px !important;
+  overflow: hidden;
+}
+
+/* Neumorphic input field inside */
+ion-searchbar::part(container) {
+  border-radius: 999px !important;
+  background: #eef2f6 !important;
+  box-shadow:
+    inset 3px 3px 6px rgba(170, 180, 190, 0.4),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+ion-searchbar::part(input) {
+  border-radius: 999px !important;
+  font-size: 14px;
+  padding-left: 36px !important;
+  color: #2f2f2f;
+  background: transparent !important;
+}
+
+ion-searchbar::part(search-icon) {
+  color: #8c96a5 !important;
+  left: 12px;
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+
+  ion-searchbar::part(input)::placeholder {
+    color: #8c96a5 !important;
+  }
+
+  /* ===== 🎛️ FILTERS (TYPE + LOCATION) ===== */
+  .filter-container {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  /* 🧊 Neumorphic Select & Input Fields */
+  ion-select,
+  ion-input {
+    width: 100%;
+    border-radius: 25px;
+    --background: #eef2f6;
+    background: #eef2f6;
+    box-shadow:
+      6px 6px 12px rgba(170, 180, 190, 0.5),
+      -6px -6px 12px rgba(255, 255, 255, 0.9);
+    color: #2f2f2f;
+    margin-bottom: 12px;
+    --padding-start: 14px;
+    --placeholder-color: #8c96a5;
+    font-size: 14px;
+    transition: all 0.25s ease-in-out;
+  }
+
+  /* 🕹️ Pressed / Active effect */
+  ion-select.others-selected,
+  ion-input.extra-input-active,
+  ion-select:focus-within,
+  ion-input:focus-within {
+    box-shadow:
+      inset 5px 5px 10px rgba(170, 180, 190, 0.6),
+      inset -5px -5px 10px rgba(255, 255, 255, 0.9);
+  }
+
+  /* 🪶 Dropdown (Popover) style */
+  ion-popover {
+    --background: #eef2f6;
+    border-radius: 18px;
+    box-shadow:
+      8px 8px 16px rgba(170, 180, 190, 0.5),
+      -8px -8px 16px rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(6px);
+  }
+
+  /* 💬 “Others” input field */
+  .extra-input ion-input {
+    border-radius: 25px;
+    box-shadow:
+      inset 4px 4px 8px rgba(170, 180, 190, 0.6),
+      inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+  }
+
+
+  /* ===== 🏷️ SECTION HEADERS ===== */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    color: #00bfff;
+  }
+
+  .section-header a {
+    font-size: 13px;
+    color: #888c92;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  /* ===== 📦 ITEM CARDS ===== */
+  .card-row {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 10px 15px;
+  }
+
+  .card-img {
+  width: 100%;
+  height: 120px;        /* adjust height to match 2nd screenshot */
+  border-radius: 20px;  /* smooth corners like your UI */
+  object-fit: cover;    /* para sakto at hindi ma-distort */
+  margin-bottom: 8px;
+  box-shadow:
+    inset 2px 2px 4px rgba(170, 180, 190, 0.5),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+  .item-card {
+    min-width: 180px;   /* default mo 150 → gawin nating mas malaki */
+    max-width: 180px;
+    padding: 10px;
+    background: #eef2f6;
+    border-radius: 20px;
+    box-shadow:
+      6px 6px 12px rgba(170, 180, 190, 0.5),
+      -6px -6px 12px rgba(255, 255, 255, 0.9);
+    transition: transform 0.2s ease;
+    color: #555;
+  }
+
+  .item-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .item-card h3 {
+    font-size: 14px;
+    margin: 5px 0 2px;
+    font-weight: 600;
+    color: #444;
+  }
+
+  .item-card p {
+    font-size: 12px;
+    color: #555;
+  }
+
+  .type {
+    color: #6b6e73;
+    font-weight: 600;
+  }
+
+  /* ===== 🧾 LIST VIEW ===== */
+  .list-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 10px 15px;
+    border-radius: 20px;
+    background: #eef2f6;
+    box-shadow:
+      6px 6px 12px rgba(170, 180, 190, 0.5),
+      -6px -6px 12px rgba(255, 255, 255, 0.9);
+  }
+
+  .list-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    object-fit: cover;
+    margin-right: 12px;
+    box-shadow:
+      inset 2px 2px 4px rgba(170, 180, 190, 0.5),
+      inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+  }
+
+  .info h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2f2f2f;
+  }
+
+  .info p {
+    margin: 2px 0;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .info span {
+    font-size: 12px;
+    color: #8c96a5;
+  }
+
+  /* ===== 🕵️‍♀️ NO RESULTS ===== */
+  .no-results {
+    text-align: center;
+    color: #444;
+    margin: 40px 20px;
+    padding: 20px;
+    border-radius: 20px;
+    background: #eef2f6;
+    box-shadow:
+      inset 5px 5px 10px rgba(170, 180, 190, 0.5),
+      inset -5px -5px 10px rgba(255, 255, 255, 0.8);
+  }
+
+  .no-results ion-icon {
+    font-size: 40px;
+    color: #8c96a5;
+    opacity: 0.9;
+  }
+</style>
